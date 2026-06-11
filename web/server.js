@@ -57,7 +57,7 @@ app.get("/api/recordings", (req, res) => {
         camera.name;
 
       const folder =
-        camera.folder;
+        camera.recordingsFolder;
 
       const cameraPath =
         path.join(VIDEO_ROOT, folder);
