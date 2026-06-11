@@ -46,5 +46,3 @@ cd cftv-kiosk/deploy
 chmod +x deploy-base.sh
 
 ./deploy-base.sh
-
-cp deploy/config.example.json web/config.json
