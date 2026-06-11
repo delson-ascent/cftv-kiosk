@@ -18,6 +18,7 @@ Sistema de monitoramento baseado em:
 
 ## Arquitetura
 
+```text
 Agent DVR
     ↓
 Arquivos MKV + JPG
@@ -33,6 +34,7 @@ MediaMTX
 HLS (.m3u8)
     ↓
 index.html
+```
 
 ## Instalação
 
