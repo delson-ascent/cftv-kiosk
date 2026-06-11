@@ -129,6 +129,10 @@ app.get("/api/recordings", (req, res) => {
 
 });
 
+app.get("/api/config", (req, res) => {
+  res.json(config);
+});
+
 app.listen(PORT, () => {
 
   console.log(
