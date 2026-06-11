@@ -4,7 +4,6 @@
 <meta charset="UTF-8">
 <title>CFTV Kiosk</title>
 
-<script src="config.js"></script>
 <script src="hls.min.js"></script>
 
 <style>
@@ -116,6 +115,10 @@ button:hover {
 </div>
 
 <script>
+const config =
+  await fetch("/api/config")
+    .then(r => r.json());
+  
 function loadStream(videoElement, url) {
 
   if (Hls.isSupported()) {
