@@ -1,1 +1,275 @@
+<!DOCTYPE html>
+<html>
+<head>
+<meta charset="UTF-8">
+<title>Gravações</title>
 
+<style>
+body {
+  margin: 0;
+  background: #111;
+  color: white;
+  font-family: sans-serif;
+}
+
+.header {
+  display: flex;
+  gap: 10px;
+  padding: 15px;
+  background: #1b1b1b;
+  position: sticky;
+  top: 0;
+  z-index: 10;
+}
+
+button {
+  padding: 10px 16px;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.container {
+  padding: 20px;
+}
+
+.camera-section {
+  margin-bottom: 40px;
+}
+
+.camera-title {
+  font-size: 24px;
+  margin-bottom: 20px;
+}
+
+.camera-tabs {
+  display: flex;
+  gap: 10px;
+  margin-bottom: 20px;
+}
+
+.camera-tab {
+  padding: 10px 20px;
+  background: #222;
+  border: 1px solid #444;
+  color: white;
+  cursor: pointer;
+  border-radius: 8px;
+}
+
+.camera-tab.active {
+  background: #555;
+}
+.date-group {
+  margin-bottom: 30px;
+}
+
+.date-title {
+  font-size: 18px;
+  margin-bottom: 15px;
+  opacity: 0.8;
+}
+
+.video-grid {
+  display: grid;
+
+  grid-template-columns:
+    repeat(auto-fill, minmax(160px, 1fr));
+
+  gap: 15px;
+
+  margin-bottom: 25px;
+}
+
+.video-card {
+  background: #1e1e1e;
+  border-radius: 12px;
+  overflow: hidden;
+  cursor: pointer;
+  transition: transform 0.2s;
+}
+
+.video-card:hover {
+  transform: scale(1.02);
+}
+
+.video-thumb {
+  width: 100%;
+  height: 90px;
+
+  object-fit: contain;
+
+  background: black;
+}
+
+.video-info {
+  padding: 12px;
+}
+
+.video-name {
+  font-size: 14px;
+  margin-bottom: 8px;
+}
+
+.video-time {
+  font-size: 12px;
+  opacity: 0.7;
+}
+
+.modal {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.9);
+  display: none;
+  justify-content: center;
+  align-items: center;
+  flex-direction: column;
+  z-index: 100;
+}
+
+.modal video {
+  width: 90%;
+  max-width: 1200px;
+  max-height: 80vh;
+}
+
+.modal-controls {
+  margin-top: 15px;
+}
+
+select,
+.close-btn {
+  padding: 10px;
+}
+</style>
+</head>
+<body>
+
+<div class="header">
+  <button onclick="goBack()">Voltar</button>
+</div>
+
+<div id="recordings" class="container">
+</div>
+
+<div class="modal" id="playerModal">
+  <video id="player" controls></video>
+
+  <div class="modal-controls">
+    <button class="close-btn" onclick="closePlayer()">
+      Fechar
+    </button>
+
+  </div>
+</div>
+
+<script>
+let recordings = {};
+let currentCamera =
+  CONFIG.cameras.camera1.name;
+
+function goBack() {
+  window.location.href = "/";
+}
+
+function selectCamera(camera) {
+
+  currentCamera = camera;
+
+  render();
+}
+
+function openVideo(videoFile) {
+
+  const modal = document.getElementById("playerModal");
+  const player = document.getElementById("player");
+
+  modal.style.display = "flex";
+
+  // FUTURO:
+  // Aqui chamaremos o backend Express.
+  // Exemplo:
+  // /api/play?file=...
+
+  player.src = videoFile;
+  player.load();
+}
+
+function closePlayer() {
+
+  const modal = document.getElementById("playerModal");
+  const player = document.getElementById("player");
+
+  player.pause();
+  player.src = "";
+
+  modal.style.display = "none";
+}
+
+function render() {
+
+  let html = "";
+  html += `
+  <div class="camera-tabs">
+    ${Object.keys(recordings).map(camera => `
+      <button
+        class="camera-tab ${camera === currentCamera ? 'active' : ''}"
+        onclick="selectCamera('${camera}')"
+      >
+        ${camera}
+      </button>
+    `).join("")}
+  </div>
+`;
+
+const cameraData = recordings[currentCamera];
+
+if (cameraData) {
+
+  Object.entries(cameraData).forEach(([date, videos]) => {
+
+    html += `<h2>${date}</h2>`;
+
+    html += `<div class="video-grid">`;
+
+    videos.forEach(video => {
+
+      html += `
+        <div class="video-card"
+             onclick="openVideo('${video.path}')">
+
+          <img
+            class="video-thumb"
+            src="${video.thumb}"
+          >
+
+          <div class="video-info">
+            <div>${video.time}</div>
+          </div>
+
+        </div>
+      `;
+    });
+
+    html += `</div>`;
+  });
+}
+document.getElementById("recordings").innerHTML = html;
+}
+
+async function loadRecordings() {
+
+  const response =
+    await fetch("/api/recordings");
+
+  recordings =
+    await response.json();
+
+  render();
+}
+
+loadRecordings();
+</script>
+
+</body>
+</html>
