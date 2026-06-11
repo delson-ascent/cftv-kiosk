@@ -16,6 +16,24 @@ Sistema de monitoramento baseado em:
 - Kiosk Mode
 - Compatível com Chrome
 
+## Arquitetura
+
+Agent DVR
+    ↓
+Arquivos MKV + JPG
+    ↓
+Node.js (server.js)
+    ↓
+API /api/recordings
+    ↓
+recordings.html
+
+MediaMTX
+    ↓
+HLS (.m3u8)
+    ↓
+index.html
+
 ## Instalação
 
 ```bash
