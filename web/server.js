@@ -4,25 +4,42 @@ const path = require("path");
 
 const app = express();
 
-const PORT = 8080;
+const PORT =
+  process.env.PORT || 8080;
 
 /*
  * Configuração das câmeras
  * Ajustar conforme necessário
  */
+const configPath =
+  path.join(__dirname, "config.json");
+
+if (!fs.existsSync(configPath)) {
+
+  throw new Error(
+    "config.json não encontrado"
+  );
+
+}
+
 const config =
   JSON.parse(
     fs.readFileSync(
-      path.join(__dirname, "config.json"),
+      configPath,
       "utf8"
     )
   );
-if (!config.cameras) {
 
+if (!config.cameras) {
   throw new Error(
     "config.json inválido: cameras não encontrado"
   );
+}
 
+if (!Array.isArray(config.cameras)) {
+  throw new Error(
+    "config.json inválido: cameras deve ser um array"
+  );
 }
 
 /*
@@ -65,6 +82,11 @@ app.get("/api/recordings", (req, res) => {
       result[cameraName] = {};
 
       if (!fs.existsSync(cameraPath)) {
+
+        console.warn(
+          `Pasta não encontrada: ${cameraPath}`
+        );
+
         return;
       }
 
@@ -131,6 +153,14 @@ app.get("/api/recordings", (req, res) => {
 
 app.get("/api/config", (req, res) => {
   res.json(config);
+});
+
+app.get("/health", (req, res) => {
+
+  res.json({
+    status: "ok"
+  });
+
 });
 
 app.listen(PORT, () => {
