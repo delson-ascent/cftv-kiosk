@@ -1,7 +1,12 @@
-git clone ...
+git clone https://github.com/delson-ascent/cftv-kiosk.git
 
-cp config.example.json config.json
+cd cftv-kiosk
 
+cp deploy/config.example.json web/config.json
+
+nano web/config.json
+
+# quando existir package.json
 npm install
 
 sudo systemctl enable cftv-web
