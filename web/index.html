@@ -114,11 +114,7 @@ button:hover {
 
 </div>
 
-<script>
-const config =
-  await fetch("/api/config")
-    .then(r => r.json());
-  
+<script>  
 function loadStream(videoElement, url) {
 
   if (Hls.isSupported()) {
@@ -187,25 +183,55 @@ function openRecordings() {
 
 }
 
-document.getElementById("cam1Name")
-  .textContent =
-  CONFIG.cameras.camera1.name;
+async function init() {
 
-document.getElementById("cam2Name")
-  .textContent =
-  CONFIG.cameras.camera2.name;
+  try {
 
-loadStream(
-  document.getElementById("video1"),
-  CONFIG.cameras.camera1.streamUrl
-);
+    const config =
+      await fetch("/api/config")
+        .then(r => r.json());
 
-loadStream(
-  document.getElementById("video2"),
-  CONFIG.cameras.camera2.streamUrl
-);
+    if (config.cameras[0]) {
 
-showCam(0);
+      document.getElementById("cam1Name")
+        .textContent =
+        config.cameras[0].name;
+
+      loadStream(
+        document.getElementById("video1"),
+        config.cameras[0].streamUrl
+      );
+
+    }
+
+    if (config.cameras[1]) {
+
+      document.getElementById("cam2Name")
+        .textContent =
+        config.cameras[1].name;
+
+      loadStream(
+        document.getElementById("video2"),
+        config.cameras[1].streamUrl
+      );
+
+    }
+
+    showCam(0);
+
+  }
+  catch (error) {
+
+    console.error(
+      "Erro ao carregar configuração:",
+      error
+    );
+
+  }
+
+}
+
+init();
 
 </script>
 
