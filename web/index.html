@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <title>CFTV Kiosk</title>
 
+<script src="config.js"></script>
 <script src="hls.min.js"></script>
 
 <style>
@@ -75,11 +76,11 @@ button:hover {
 <div class="controls">
 
   <button onclick="showCam(1)">
-    Câmera 1
+    <span id="cam1Name">Câmera 1</span>
   </button>
 
   <button onclick="showCam(2)">
-    Câmera 2
+    <span id="cam2Name">Câmera 2</span>
   </button>
 
   <button onclick="showCam(0)">
@@ -115,12 +116,6 @@ button:hover {
 </div>
 
 <script>
-
-const STREAMS = {
-  camera1: "http://localhost:8888/camera1/index.m3u8",
-  camera2: "http://localhost:8888/camera2/index.m3u8"
-};
-
 function loadStream(videoElement, url) {
 
   if (Hls.isSupported()) {
@@ -189,14 +184,22 @@ function openRecordings() {
 
 }
 
+document.getElementById("cam1Name")
+  .textContent =
+  CONFIG.cameras.camera1.name;
+
+document.getElementById("cam2Name")
+  .textContent =
+  CONFIG.cameras.camera2.name;
+
 loadStream(
   document.getElementById("video1"),
-  STREAMS.camera1
+  CONFIG.cameras.camera1.hls
 );
 
 loadStream(
   document.getElementById("video2"),
-  STREAMS.camera2
+  CONFIG.cameras.camera2.hls
 );
 
 showCam(0);
