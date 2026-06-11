@@ -33,15 +33,6 @@ button {
   padding: 20px;
 }
 
-.camera-section {
-  margin-bottom: 40px;
-}
-
-.camera-title {
-  font-size: 24px;
-  margin-bottom: 20px;
-}
-
 .camera-tabs {
   display: flex;
   gap: 10px;
@@ -59,15 +50,6 @@ button {
 
 .camera-tab.active {
   background: #555;
-}
-.date-group {
-  margin-bottom: 30px;
-}
-
-.date-title {
-  font-size: 18px;
-  margin-bottom: 15px;
-  opacity: 0.8;
 }
 
 .video-grid {
@@ -106,16 +88,6 @@ button {
   padding: 12px;
 }
 
-.video-name {
-  font-size: 14px;
-  margin-bottom: 8px;
-}
-
-.video-time {
-  font-size: 12px;
-  opacity: 0.7;
-}
-
 .modal {
   position: fixed;
   inset: 0;
@@ -137,7 +109,6 @@ button {
   margin-top: 15px;
 }
 
-select,
 .close-btn {
   padding: 10px;
 }
@@ -165,8 +136,7 @@ select,
 
 <script>
 let recordings = {};
-let currentCamera =
-  CONFIG.cameras.camera1.name;
+let currentCamera = null;
 
 function goBack() {
   window.location.href = "/";
@@ -192,7 +162,10 @@ function openVideo(videoFile) {
   // /api/play?file=...
 
   player.src = videoFile;
+
   player.load();
+
+  player.play().catch(() => {});
 }
 
 function closePlayer() {
@@ -241,6 +214,7 @@ if (cameraData) {
           <img
             class="video-thumb"
             src="${video.thumb}"
+            onerror="this.style.display='none'"
           >
 
           <div class="video-info">
@@ -259,16 +233,61 @@ document.getElementById("recordings").innerHTML = html;
 
 async function loadRecordings() {
 
+try {
+
   const response =
     await fetch("/api/recordings");
+
+  if (!response.ok) {
+
+    throw new Error(
+      `HTTP ${response.status}`
+    );
+
+  }
 
   recordings =
     await response.json();
 
+  const cameras =
+    Object.keys(recordings);
+
+  if (cameras.length > 0) {
+
+    currentCamera =
+      cameras[0];
+
+  }
+
   render();
+
+}
+catch (error) {
+
+  console.error(
+    "Erro ao carregar gravações:",
+    error
+  );
+
+}
+  
 }
 
 loadRecordings();
+
+document
+  .getElementById("playerModal")
+  .addEventListener("click", event => {
+
+    if (
+      event.target.id === "playerModal"
+    ) {
+
+      closePlayer();
+
+    }
+
+  });
 </script>
 
 </body>
