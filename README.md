@@ -1,3 +1,4 @@
+Esse projeto provavelmente ainda não funciona, precisa de algumas correções, mas está muito próximo do funcional
 # CFTV Kiosk
 
 Sistema de monitoramento baseado em:
