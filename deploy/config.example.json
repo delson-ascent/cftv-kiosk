@@ -2,13 +2,13 @@
   "cameras": [
     {
       "name": "Câmera 1",
-      "folder": "FolderCam1",
-      "hls": "http://localhost:8888/camera1/index.m3u8"
+      "recordingsFolder": "FolderCam1",
+      "streamUrl": "http://localhost:8888/camera1/index.m3u8"
     },
     {
       "name": "Câmera 2",
-      "folder": "FolderCam2",
-      "hls": "http://localhost:8888/camera2/index.m3u8"
+      "recordingsFolder": "FolderCam2",
+      "streamUrl": "http://localhost:8888/camera2/index.m3u8"
     }
   ]
 }
